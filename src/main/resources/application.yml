@@ -1,0 +1,20 @@
+#更改端口
+server:
+    port: 8888
+spring:
+  profiles:
+    active: prod
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/test?useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: root
+logging: 
+  level: 
+    root: info
+    com.example: debug
+    file: user.log
+#公共配置与profiles选择无关 mapperLocations指的路径是src/main/resources
+#mybatis:
+#  typeAliasesPackage: com.xdd.entity
+#  mapperLocations: classpath:mapper/*.xml

@@ -1,0 +1,115 @@
+<<!DOCTYPE html>
+	<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>登录</title>
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta http-equiv="Expires" content="0">
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/toast1.css" id="toast_css" />
+		<link rel="stylesheet" href="css/toast2.css" id="toast_css" />
+		<script type="text/javascript" src="js/jquery-1.11.0.js"></script>
+		<script type="text/javascript" src="js/vue2.2.js"></script>
+		<script type="text/javascript" src="js/md5.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+			// 自己定义的Toast，需要配合<link rel="stylesheet" href="css/toast1.css" id="toast_css"/>使用
+			var MyToast = {
+				success_toast: function(msg) {
+					var obj = document.getElementById("toast_css");
+					obj.setAttribute("href", "css/toast1.css");
+					mui.toast(msg);
+				},
+				fail_toast: function(msg) {
+					var obj = document.getElementById("toast_css");
+					obj.setAttribute("href", "css/toast2.css");
+					mui.toast(msg);
+				}
+			};
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<div v-show="true">
+				<h1>用户第一次登录或密码过期，请修改重置密码</h1>
+				<table>
+					<form class="form">
+						<tr>
+							<td>原密码：</td>
+							<td><input type="password" v-model="oldPassword" placeholder="密码" /></td>
+						</tr>
+						<tr>
+							<td>新密码：</td>
+							<td><input type="password" v-model="newPassword" placeholder="密码" /></td>
+						</tr>
+						<tr>
+							<td><button type="button" v-on:click="comfirm">确定</button></td>
+						</tr>
+					</form>
+				</table>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/all_common.js"></script>
+	<script>
+		var app = new Vue({
+			el: '#app',
+			data: {
+				userId: "", //用户名
+				password: "", //密码
+				oldPassword: "",//原密码
+				newPassword: "",//原密码
+			},
+			methods: {
+				init: function() { // 初始化页面数据
+					var theRequest = getRequest(location.href);
+					this.userId = theRequest.userId;
+				},
+				// 确定
+				comfirm: function() {
+					if(this.oldPassword.trim()==""||this.newPassword.trim()==""){
+						MyToast.fail_toast("密码不可为空！");
+						return;
+					}
+					$.getJSON('http://localhost:8888/gyzq/modify', {
+						"userId": this.userId,
+						"oldPassword": $.md5(this.oldPassword),
+						"newPassword": $.md5(this.newPassword),
+						"date": new Date(),
+					}, function(result) {
+						console.log(result.data);
+						//获得服务器响应
+						if(result.success) {
+							MyToast.success_toast(result.sucMsg);
+							app.goLoginPage();
+						} else {
+							app.oldPassword = "";
+							app.newPassword = "";
+							MyToast.fail_toast(result.errMsg);
+						}
+					});
+				},
+				goLoginPage: function(){
+					location.href = "login.html?userId=" + this.userId;
+				}
+			},
+			beforecreate: function() {
+				// 可以在这加个loading事件
+			},
+			created: function() {
+
+			},
+			mounted: function() {
+				this.init();
+			},
+			beforeDestory: function() {
+				// destoryed ：当前组件已被删除，清空相关内容
+			}
+		})
+	</script>
+
+	</html>

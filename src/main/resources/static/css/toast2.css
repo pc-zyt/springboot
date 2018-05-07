@@ -1,0 +1,10 @@
+/*toast失败信息提示*/
+.mui-toast-container {bottom: 50% !important;}
+.mui-toast-message {
+  background: url(../images/toast_fail.png) no-repeat center 10px #000;
+  opacity: 0.6; 
+  color: #fff; 
+  width: 180px; 
+  padding: 70px 5px 10px 5px; 
+  background-size: 26%;
+}
